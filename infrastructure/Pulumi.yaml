@@ -1,0 +1,8 @@
+name: demo
+runtime: nodejs
+description: A minimal AWS TypeScript Pulumi program
+template:
+  config:
+    aws:region:
+      description: The AWS Deployment Region
+      default: ap-southeast-2
