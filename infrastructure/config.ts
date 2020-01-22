@@ -21,6 +21,16 @@ export const POSTGRES_DB_NAME = config.get("POSTGRES_DB_NAME") || 'app';
 export const POSTGRES_USERNAME = config.get("POSTGRES_USERNAME") || 'postgres';
 export const POSTGRES_PASSWORD = PG_PASSWORD;
 
+// Hasura Config
+const HASURA_SECRET = new random.RandomPassword(`${PROJECT_NAME}-hasura-secret`, {
+  length: 13,
+  overrideSpecial: "_%@#",
+  special: false
+});
+export const HASURA_GRAPHQL_ADMIN_SECRET = HASURA_SECRET;
+export const HASURA_GRAPHQL_ENABLE_TELEMERTY = config.get('HASURA_GRAPHQL_ENABLE_TELEMERTY') || 'false';
+export const HASURA_GRAPHQL_ENABLE_CONSOLE = config.get('HASURA_GRAPHQL_ENABLE_CONSOLE') || 'false';
+
 // Kubernetes Config
 export const CLUSTER_NODE_COUNT = config.getNumber("CLUSTER_NODE_COUNT") || 2;
 export const CLUSTER_NODE_INSTANCE_TYPE: INSTANCE_TYPE =

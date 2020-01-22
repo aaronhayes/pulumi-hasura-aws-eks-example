@@ -1,3 +1,4 @@
+import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 import * as k8s from "@pulumi/kubernetes";
 
@@ -21,28 +22,20 @@ export const db = new aws.rds.Instance(`${config.PROJECT_NAME}-postgres`, {
   publiclyAccessible: true
 });
 
-
-const username = db.username.apply(un => un);
-const password = db.password.apply(pw => pw);
-const address = db.address.apply(addr => addr);
-const port = db.port.apply(port => port);
-const name = db.name.apply(name => name);
-
-
-console.log(username);
-console.log(password);
-console.log(address);
-console.log(port);
-console.log(name);
+const connectionUrl = pulumi
+  .all([db.username, db.password, db.address, db.port, db.name])
+  .apply(([un, pw, addr, port, name]) =>
+    Buffer.from(`postgres://${un}:${pw}@${addr}:${port}/${name}`).toString(
+      "base64"
+    )
+  );
 
 // Create a secret from the DB connection
 export const dbConn = new k8s.core.v1.Secret(
   "postgres-db-conn",
   {
     data: {
-      dbConnectionUrl: Buffer.from(
-        `postgres://${username}:${password}@${address}:${port}/${name}`
-      ).toString("base64")
+      dbConnectionUrl: connectionUrl
     }
   },
   { provider: cluster.provider }

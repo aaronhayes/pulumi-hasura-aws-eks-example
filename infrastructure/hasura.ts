@@ -37,11 +37,11 @@ const hasuraDeployment = new k8s.apps.v1.Deployment(
               env: [
                 {
                   name: "HASURA_GRAPHQL_ENABLE_CONSOLE",
-                  value: "false"
+                  value: config.HASURA_GRAPHQL_ENABLE_CONSOLE
                 },
                 {
                   name: "HASURA_GRAPHQL_ENABLE_TELEMETRY",
-                  value: "false"
+                  value: config.HASURA_GRAPHQL_ENABLE_TELEMERTY
                 },
                 {
                   name: "HASURA_GRAPHQL_DATABASE_URL",
