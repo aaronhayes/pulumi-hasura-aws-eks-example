@@ -13,7 +13,7 @@ const deployment = new k8s.apps.v1.Deployment(
       labels: appLabels
     },
     spec: {
-      replicas: 2,
+      replicas: 1,
       selector: { matchLabels: appLabels },
       template: {
         metadata: {
@@ -42,7 +42,7 @@ const deployment = new k8s.apps.v1.Deployment(
 // Export deployment name
 export const deploymentName = deployment.metadata.name;
 
-const service = new k8s.core.v1.Service(
+export const service = new k8s.core.v1.Service(
   `${appName}-svc`,
   {
     metadata: { name: "nginx", labels: appLabels },
@@ -51,7 +51,8 @@ const service = new k8s.core.v1.Service(
       ports: [
         {
           port: 80,
-          targetPort: "http"
+          targetPort: 80,
+          name: 'http'
         }
       ],
       selector: appLabels

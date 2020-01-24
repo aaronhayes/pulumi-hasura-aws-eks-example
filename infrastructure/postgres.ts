@@ -12,7 +12,7 @@ const dbSubnets = new aws.rds.SubnetGroup(`${config.PROJECT_NAME}-subnets`, {
 
 export const db = new aws.rds.Instance(`${config.PROJECT_NAME}-postgres`, {
   engine: "postgres",
-  instanceClass: "db.t2.small",
+  instanceClass: config.POSTGRES_INSTANCE_TYPE,
   allocatedStorage: 20,
   dbSubnetGroupName: dbSubnets.id,
   name: config.POSTGRES_DB_NAME,

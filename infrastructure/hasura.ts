@@ -66,7 +66,7 @@ const hasuraDeployment = new k8s.apps.v1.Deployment(
 // Export deployment name
 export const deploymentName = hasuraDeployment.metadata.name;
 
-const hasuraService = new k8s.core.v1.Service(
+export const service = new k8s.core.v1.Service(
   `${appName}-svc`,
   {
     metadata: {
@@ -79,12 +79,13 @@ const hasuraService = new k8s.core.v1.Service(
         {
           port: 80,
           targetPort: 8080,
-          protocol: "TCP"
+          name: 'http'
         }
-      ]
+      ],
+      selector: hasuraLabels
     }
   },
   { provider: cluster.provider }
 );
 
-export const url = hasuraService.status.loadBalancer.ingress[0].hostname;
+export const url = service.status.loadBalancer.ingress[0].hostname;
