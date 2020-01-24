@@ -4,6 +4,7 @@ import * as k8s from "@pulumi/kubernetes";
 
 import * as config from "./config";
 import { cluster, vpc } from "./cluster";
+import { sg } from './security-group';
 
 const dbSubnets = new aws.rds.SubnetGroup(`${config.PROJECT_NAME}-subnets`, {
   subnetIds: vpc.privateSubnetIds
@@ -14,12 +15,12 @@ export const db = new aws.rds.Instance(`${config.PROJECT_NAME}-postgres`, {
   instanceClass: "db.t2.small",
   allocatedStorage: 20,
   dbSubnetGroupName: dbSubnets.id,
-  vpcSecurityGroupIds: [cluster.clusterSecurityGroup.id],
   name: config.POSTGRES_DB_NAME,
   username: config.POSTGRES_USERNAME,
   password: config.POSTGRES_PASSWORD,
   skipFinalSnapshot: true,
-  publiclyAccessible: true
+  publiclyAccessible: false,
+  vpcSecurityGroupIds: [sg.id]
 });
 
 const connectionUrl = pulumi

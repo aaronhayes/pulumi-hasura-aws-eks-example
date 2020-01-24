@@ -3,6 +3,7 @@ import * as k8s from "@pulumi/kubernetes";
 
 import * as config from "./config";
 import { vpc, cluster } from "./cluster";
+import { sg } from "./security-group";
 
 // Create a Redis Instance
 const cacheSubnets = new aws.elasticache.SubnetGroup(
@@ -19,8 +20,15 @@ export const cacheCluster = new aws.elasticache.Cluster(
     nodeType: "cache.t2.small",
     numCacheNodes: 1,
     subnetGroupName: cacheSubnets.id,
-    securityGroupIds: [cluster.clusterSecurityGroup.id]
+    securityGroupIds: [sg.id]
   }
+);
+
+const redisPort = cacheCluster.port.apply(port =>
+  Buffer.from(`${port}`).toString("base64")
+);
+const redisHost = cacheCluster.cacheNodes[0].address.apply(host =>
+  Buffer.from(`${host}`).toString("base64")
 );
 
 // Create a ConfigMap from the cache connection information.
@@ -28,7 +36,8 @@ export const cacheConn = new k8s.core.v1.ConfigMap(
   "redis-db-conn",
   {
     data: {
-      host: cacheCluster.cacheNodes[0].address
+      host: redisHost,
+      port: redisPort
     }
   },
   { provider: cluster.provider }

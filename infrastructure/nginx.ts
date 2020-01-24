@@ -4,11 +4,12 @@ import * as config from "./config";
 import { cluster } from "./cluster";
 
 const appName = "my-nginx-demo";
-const appLabels = { env: config.APP_CLASS };
+const appLabels = { name: "nginx" };
 const deployment = new k8s.apps.v1.Deployment(
   `${appName}-deployment`,
   {
     metadata: {
+      name: "nginx",
       labels: appLabels
     },
     spec: {
@@ -44,7 +45,7 @@ export const deploymentName = deployment.metadata.name;
 const service = new k8s.core.v1.Service(
   `${appName}-svc`,
   {
-    metadata: { labels: appLabels },
+    metadata: { name: "nginx", labels: appLabels },
     spec: {
       type: "LoadBalancer",
       ports: [

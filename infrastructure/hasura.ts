@@ -2,18 +2,19 @@ import * as k8s from "@pulumi/kubernetes";
 import { cluster } from "./cluster";
 import * as config from "./config";
 
-import { dbConn, db } from "./postgres";
+import { dbConn } from "./postgres";
 
 const appName = "hasura";
 
 const hasuraLabels = {
-  env: config.APP_CLASS
+  app: 'hasura'
 };
 
 const hasuraDeployment = new k8s.apps.v1.Deployment(
   `${appName}-deployment`,
   {
     metadata: {
+      name: 'hasura',
       labels: hasuraLabels
     },
     spec: {
@@ -65,25 +66,25 @@ const hasuraDeployment = new k8s.apps.v1.Deployment(
 // Export deployment name
 export const deploymentName = hasuraDeployment.metadata.name;
 
-// const hasuraService = new k8s.core.v1.Service(
-//   `${appName}-svc`,
-//   {
-//     metadata: {
-//       namespace: namesapce.metadata.name,
-//       labels: hasuraLabels
-//     },
-//     spec: {
-//       type: "LoadBalancer",
-//       ports: [
-//         {
-//           port: 80,
-//           targetPort: 8080,
-//           protocol: "TCP"
-//         }
-//       ]
-//     }
-//   },
-//   { provider: cluster.provider }
-// );
+const hasuraService = new k8s.core.v1.Service(
+  `${appName}-svc`,
+  {
+    metadata: {
+      name: 'hasura',
+      labels: hasuraLabels
+    },
+    spec: {
+      type: "LoadBalancer",
+      ports: [
+        {
+          port: 80,
+          targetPort: 8080,
+          protocol: "TCP"
+        }
+      ]
+    }
+  },
+  { provider: cluster.provider }
+);
 
-export const url = ''; // hasuraService.status.loadBalancer.ingress[0].hostname;
+export const url = hasuraService.status.loadBalancer.ingress[0].hostname;
