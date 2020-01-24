@@ -23,6 +23,12 @@ Example on deploying [Hasura](https://hasura.io/) on AWS EKS using [Pulumi](http
 - Secrets Including Postgres and Redis Connection details
 - Nginx Ingress (Using Helm)
 
+## Planned Features
+
+- GitHub Actions
+- Deployment of Dockerised Node App (using ECR) for Hasura Event Triggers
+- Deployment of Hasura Backend Plus for Authentication
+
 ## Fun Instructions
 
 1. `cd infrastructure`
