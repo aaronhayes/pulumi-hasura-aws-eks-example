@@ -25,12 +25,18 @@ Example on deploying [Hasura](https://hasura.io/) on AWS EKS using [Pulumi](http
 
 ## Fun Instructions
 
-1. `pulumi up`
-2. `pulumi stack output kubeconfig > kubeconfigs/test.json`
-3. `KUBECONFIG=./kubeconfigs/test.json kubectl get pods`
-4. `KUBECONFIG=./kubeconfigs/test.json kubectl scale deployment/hasura --replicas=2`
+1. `cd infrastructure`
+2. `pulumi up`
+3. `pulumi stack output kubeconfig > kubeconfigs/test.json`
+4. `KUBECONFIG=./kubeconfigs/test.json kubectl get pods`
+5. `KUBECONFIG=./kubeconfigs/test.json kubectl scale deployment/hasura --replicas=2`
 
 ## Accessing services
+
 1. `KUBECONFIG=./kubeconfigs/test.json kubectl get ingresses`
 2. `curl -H 'Host: graphql.pulumi.demo.com' <YOUR_INGRESS_ADDRESS>/healthz`
 3. `curl -H 'Host: nginx.pulumi.demo.com' <YOUR_INGRESS_ADDRESS>`
+
+## Bring Down Resources
+
+1. `pulumi destroy --yes`
