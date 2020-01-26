@@ -19,7 +19,7 @@ Example on deploying [Hasura](https://hasura.io/) on AWS EKS using [Pulumi](http
 ## Kubernetes Instances/Components
 
 - Hasura Instance
-- Nginx Sample app
+- Hasura Backend Plus
 - Secrets Including Postgres and Redis Connection details
 - Nginx Ingress (Using Helm)
 
@@ -41,7 +41,7 @@ Example on deploying [Hasura](https://hasura.io/) on AWS EKS using [Pulumi](http
 
 1. `KUBECONFIG=./kubeconfigs/test.json kubectl get ingresses`
 2. `curl -H 'Host: graphql.pulumi.demo.com' <YOUR_INGRESS_ADDRESS>/healthz`
-3. `curl -H 'Host: nginx.pulumi.demo.com' <YOUR_INGRESS_ADDRESS>`
+3. `curl -H 'Host: auth.pulumi.demo.com' <YOUR_INGRESS_ADDRESS>/healthz`
 
 ## Bring Down Resources
 

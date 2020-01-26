@@ -1,7 +1,6 @@
 import * as pulumi from "@pulumi/pulumi";
 import { Config } from "@pulumi/pulumi";
 import * as random from "@pulumi/random";
-import * as k8s from "@pulumi/kubernetes";
 
 type INSTANCE_TYPE = "t2.micro" | "t2.small" | "t2.medium" | "t2.large";
 
@@ -37,6 +36,16 @@ export const HASURA_GRAPHQL_ENABLE_TELEMERTY =
   config.get("HASURA_GRAPHQL_ENABLE_TELEMERTY") || "false";
 export const HASURA_GRAPHQL_ENABLE_CONSOLE =
   config.get("HASURA_GRAPHQL_ENABLE_CONSOLE") || "false";
+
+const JWT_SECRET = new random.RandomPassword(`${PROJECT_NAME}-JWT-secret`, {
+  length: 35,
+  overrideSpecial: "_%@#",
+  special: false
+});
+
+export const HASURA_GRAPHQL_JWT_SECRET = JWT_SECRET.result.apply(
+  secret => `{ "type": "HS256", "key": "${secret}" }`
+);
 
 // Kubernetes Config
 export const CLUSTER_NODE_COUNT = config.getNumber("CLUSTER_NODE_COUNT") || 2;

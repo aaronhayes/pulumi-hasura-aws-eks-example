@@ -1,10 +1,10 @@
 import * as k8s from "@pulumi/kubernetes";
 
 import { service as hasuraService } from "./hasura";
-import { service as nginxService } from "./nginx";
+import { service as hbpService } from "./hbp";
 
 import * as config from "./config";
-import { cluster } from "./cluster";
+import { cluster, namespaceName } from "./cluster";
 
 // Install Nginx
 
@@ -14,6 +14,7 @@ const nginx = new k8s.helm.v2.Chart(
   {
     chart: "nginx-ingress",
     version: "1.24.4",
+    namespace: namespaceName,
     fetchOpts: { repo: "https://kubernetes-charts.storage.googleapis.com/" },
     values: { controller: { publishService: { enabled: true } } }
   },
@@ -27,6 +28,7 @@ export const ingress = new k8s.networking.v1beta1.Ingress(
       labels: {
         app: "ingress"
       },
+      namespace: namespaceName,
       annotations: { "kubernetes.io/ingress.class": "nginx" }
     },
     spec: {
@@ -46,13 +48,13 @@ export const ingress = new k8s.networking.v1beta1.Ingress(
           }
         },
         {
-          host: "nginx.pulumi.demo.com",
+          host: "auth.pulumi.demo.com",
           http: {
             paths: [
               {
                 path: "/",
                 backend: {
-                  serviceName: nginxService.metadata.name,
+                  serviceName: hbpService.metadata.name,
                   servicePort: 80
                 }
               }

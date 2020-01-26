@@ -1,5 +1,6 @@
 import * as awsx from "@pulumi/awsx";
 import * as eks from "@pulumi/eks";
+import * as k8s from "@pulumi/kubernetes";
 
 import * as config from "./config";
 
@@ -19,6 +20,15 @@ export const cluster = new eks.Cluster(`cluster-pulumi-test`, {
   storageClasses: "gp2",
   deployDashboard: false
 });
+
+// Namespace
+export const namesapce = new k8s.core.v1.Namespace(
+  `${config.PROJECT_NAME}-${config.APP_CLASS}`,
+  {},
+  { provider: cluster.provider }
+);
+
+export const namespaceName = namesapce.metadata.apply(m => m.name);
 
 // Export the Cluster's Kubeconfig
 export const kubeconfig = cluster.kubeconfig;

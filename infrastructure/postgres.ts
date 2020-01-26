@@ -3,7 +3,7 @@ import * as aws from "@pulumi/aws";
 import * as k8s from "@pulumi/kubernetes";
 
 import * as config from "./config";
-import { cluster, vpc } from "./cluster";
+import { cluster, vpc, namespaceName } from "./cluster";
 import { sg } from './security-group';
 
 const dbSubnets = new aws.rds.SubnetGroup(`${config.PROJECT_NAME}-subnets`, {
@@ -35,6 +35,9 @@ const connectionUrl = pulumi
 export const dbConn = new k8s.core.v1.Secret(
   "postgres-db-conn",
   {
+    metadata: {
+      namespace: namespaceName
+    },
     data: {
       dbConnectionUrl: connectionUrl
     }

@@ -2,7 +2,7 @@ import * as aws from "@pulumi/aws";
 import * as k8s from "@pulumi/kubernetes";
 
 import * as config from "./config";
-import { vpc, cluster } from "./cluster";
+import { vpc, cluster, namespaceName } from "./cluster";
 import { sg } from "./security-group";
 
 // Create a Redis Instance
@@ -35,6 +35,9 @@ const redisHost = cacheCluster.cacheNodes[0].address.apply(host =>
 export const cacheConn = new k8s.core.v1.ConfigMap(
   "redis-db-conn",
   {
+    metadata: {
+      namespace: namespaceName
+    },
     data: {
       host: redisHost,
       port: redisPort

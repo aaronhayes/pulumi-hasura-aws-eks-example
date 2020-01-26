@@ -1,58 +1,49 @@
+// Hasura Backend Plus
 import * as k8s from "@pulumi/kubernetes";
+
 import { cluster, namespaceName } from "./cluster";
-import * as config from "./config";
 import { secrets } from "./secrets";
-import { dbConn } from "./postgres";
 
-const appName = "hasura";
-
-const hasuraLabels = {
-  app: "hasura"
-};
-
-const hasuraDeployment = new k8s.apps.v1.Deployment(
+const appName = "hbp";
+const appLabels = { name: "hbp" };
+const deployment = new k8s.apps.v1.Deployment(
   `${appName}`,
   {
     metadata: {
-      name: "hasura",
-      labels: hasuraLabels,
+      name: "hbp",
+      labels: appLabels,
       namespace: namespaceName
     },
     spec: {
       replicas: 1,
-      selector: { matchLabels: hasuraLabels },
+      selector: { matchLabels: appLabels },
       template: {
         metadata: {
-          labels: hasuraLabels
+          labels: appLabels
         },
         spec: {
           containers: [
             {
-              name: "hasura",
-              image: "hasura/graphql-engine:v1.0.0",
+              name: appName,
+              image: "nhost/hasura-backend-plus",
               ports: [
                 {
                   name: "http",
-                  containerPort: 8080
+                  containerPort: 4000
                 }
               ],
               env: [
                 {
-                  name: "HASURA_GRAPHQL_ENABLE_CONSOLE",
-                  value: config.HASURA_GRAPHQL_ENABLE_CONSOLE
+                  name: "AUTH_LOCAL_ACTIVE",
+                  value: "true"
                 },
                 {
-                  name: "HASURA_GRAPHQL_ENABLE_TELEMETRY",
-                  value: config.HASURA_GRAPHQL_ENABLE_TELEMERTY
+                  name: "STORAGE_ACTIVE",
+                  value: "false"
                 },
                 {
-                  name: "HASURA_GRAPHQL_DATABASE_URL",
-                  valueFrom: {
-                    secretKeyRef: {
-                      key: "dbConnectionUrl",
-                      name: dbConn.metadata.name
-                    }
-                  }
+                  name: "HASURA_GRAPHQL_ENDPOINT",
+                  value: "http://hasura/v1/graphql"
                 },
                 {
                   name: "HASURA_GRAPHQL_ADMIN_SECRET",
@@ -83,29 +74,26 @@ const hasuraDeployment = new k8s.apps.v1.Deployment(
 );
 
 // Export deployment name
-export const deploymentName = hasuraDeployment.metadata.name;
+export const deploymentName = deployment.metadata.name;
 
 export const service = new k8s.core.v1.Service(
   `${appName}`,
   {
-    metadata: {
-      name: "hasura",
-      labels: hasuraLabels,
-      namespace: namespaceName
-    },
+    metadata: { name: "hbp", labels: appLabels, namespace: namespaceName },
     spec: {
       type: "LoadBalancer",
       ports: [
         {
           port: 80,
-          targetPort: 8080,
+          targetPort: 4000,
           name: "http"
         }
       ],
-      selector: hasuraLabels
+      selector: appLabels
     }
   },
   { provider: cluster.provider }
 );
 
+// Export the URL for the load balanced service
 export const url = service.status.loadBalancer.ingress[0].hostname;
