@@ -16,7 +16,15 @@ const nginx = new k8s.helm.v2.Chart(
     version: "1.24.4",
     namespace: namespaceName,
     fetchOpts: { repo: "https://kubernetes-charts.storage.googleapis.com/" },
-    values: { controller: { publishService: { enabled: true } } }
+    values: { controller: { publishService: { enabled: true } } },
+    transformations: [
+      (obj: any) => {
+        // Do transformations on the YAML to set the namespace
+        if (obj.metadata) {
+          obj.metadata.namespace = namespaceName;
+        }
+      }
+    ]
   },
   { providers: { kubernetes: cluster.provider } }
 );
@@ -69,4 +77,3 @@ export const ingress = new k8s.networking.v1beta1.Ingress(
 
 export const ingressHostname = ingress.status.loadBalancer.ingress[0].hostname;
 export const ingressAddress = ingress.status.loadBalancer.ingress[0].ip;
-

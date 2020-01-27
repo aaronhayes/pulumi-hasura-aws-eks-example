@@ -12,7 +12,8 @@ export const allSubnetIds = vpc.privateSubnetIds.concat(vpc.publicSubnetIds);
 
 export const cluster = new eks.Cluster(`cluster-pulumi-test`, {
   vpcId: vpc.id,
-  subnetIds: allSubnetIds,
+  publicSubnetIds: vpc.publicSubnetIds,
+  privateSubnetIds: vpc.privateSubnetIds,
   instanceType: config.CLUSTER_NODE_INSTANCE_TYPE,
   desiredCapacity: 2,
   minSize: 1,

@@ -34,6 +34,10 @@ const deployment = new k8s.apps.v1.Deployment(
               ],
               env: [
                 {
+                  name: "PORT",
+                  value: "4000"
+                },
+                {
                   name: "AUTH_LOCAL_ACTIVE",
                   value: "true"
                 },

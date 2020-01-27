@@ -5,11 +5,11 @@
         "typescript": "^3.7.5"
     },
     "dependencies": {
-        "@pulumi/aws": "^1.0.0",
-        "@pulumi/awsx": "^0.18.10",
+        "@pulumi/aws": "^1.18.0",
+        "@pulumi/awsx": "^0.19.1",
         "@pulumi/eks": "^0.18.18",
-        "@pulumi/kubernetes": "^1.4.3",
-        "@pulumi/pulumi": "^1.0.0",
+        "@pulumi/kubernetes": "^1.4.5",
+        "@pulumi/pulumi": "^1.9.0",
         "@pulumi/random": "^1.4.0"
     }
 }

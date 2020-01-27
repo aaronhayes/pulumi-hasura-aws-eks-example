@@ -18,6 +18,7 @@ Example on deploying [Hasura](https://hasura.io/) on AWS EKS using [Pulumi](http
 
 ## Kubernetes Instances/Components
 
+- Namespace
 - Hasura Instance
 - Hasura Backend Plus
 - Secrets Including Postgres and Redis Connection details
@@ -34,12 +35,12 @@ Example on deploying [Hasura](https://hasura.io/) on AWS EKS using [Pulumi](http
 1. `cd infrastructure`
 2. `pulumi up`
 3. `pulumi stack output kubeconfig > kubeconfigs/test.json`
-4. `KUBECONFIG=./kubeconfigs/test.json kubectl get pods`
-5. `KUBECONFIG=./kubeconfigs/test.json kubectl scale deployment/hasura --replicas=2`
+4. ``KUBECONFIG=./kubeconfigs/test.json kubectl get pods --namespace=`pulumi stack output namespace` ``
+5. ``KUBECONFIG=./kubeconfigs/test.json kubectl scale deployment/hasura --replicas=2 --namespace=`pulumi stack output namespace` ``
 
 ## Accessing services
 
-1. `KUBECONFIG=./kubeconfigs/test.json kubectl get ingresses`
+1. ``KUBECONFIG=./kubeconfigs/test.json kubectl get ingresses --namespace=`pulumi stack output namespace` ``
 2. `curl -H 'Host: graphql.pulumi.demo.com' <YOUR_INGRESS_ADDRESS>/healthz`
 3. `curl -H 'Host: auth.pulumi.demo.com' <YOUR_INGRESS_ADDRESS>/healthz`
 
