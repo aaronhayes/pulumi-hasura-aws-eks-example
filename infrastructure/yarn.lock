@@ -87,6 +87,14 @@
     "@pulumi/pulumi" "^1.0.0"
     semver "^5.4.0"
 
+"@pulumi/docker@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@pulumi/docker/-/docker-1.1.0.tgz#0b2ed2b059fa823310dd2ec123a21fa3e0175840"
+  integrity sha512-AaOtsSCkUw/cHswrV0RxxJQ/rkD4FPfR7Wx0quswesS1hLB9N/KM6H+v4oKRfyF6tfr82MrdX2O6+1Gryw343A==
+  dependencies:
+    "@pulumi/pulumi" "^1.0.0"
+    semver "^5.4.0"
+
 "@pulumi/eks@^0.18.18":
   version "0.18.18"
   resolved "https://registry.yarnpkg.com/@pulumi/eks/-/eks-0.18.18.tgz#25300b3f6b58c8e56f1548cae404b8342b99b333"

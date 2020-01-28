@@ -1,4 +1,6 @@
+import * as awsx from "@pulumi/awsx";
 import * as k8s from "@pulumi/kubernetes";
+
 import { cluster, namespaceName } from "./cluster";
 import * as config from "./config";
 import { secrets } from "./secrets";
@@ -9,6 +11,10 @@ const appName = "hasura";
 const hasuraLabels = {
   app: "hasura"
 };
+
+// Build and publish to an ECR registry.
+const repo = new awsx.ecr.Repository(`${config.PROJECT_NAME}-hasura`);
+const image = repo.buildAndPushImage("../hasura");
 
 const hasuraDeployment = new k8s.apps.v1.Deployment(
   `${appName}`,
@@ -29,7 +35,7 @@ const hasuraDeployment = new k8s.apps.v1.Deployment(
           containers: [
             {
               name: "hasura",
-              image: "hasura/graphql-engine:v1.0.0",
+              image: image,
               ports: [
                 {
                   name: "http",
